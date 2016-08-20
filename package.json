@@ -1,0 +1,29 @@
+{
+  "name": "simple-rabbit",
+  "version": "0.0.1",
+  "description": "Simplify nodejs rabbitmq",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/logiXbomb/simple-rabbit.git"
+  },
+  "keywords": [
+    "rabbitmq",
+    "nodejs",
+    "amqplib",
+    "microservice",
+    "helper"
+  ],
+  "author": "Seth Lowie",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/logiXbomb/simple-rabbit/issues"
+  },
+  "homepage": "https://github.com/logiXbomb/simple-rabbit#readme",
+  "dependencies": {
+    "amqplib": "^0.4.2"
+  }
+}
