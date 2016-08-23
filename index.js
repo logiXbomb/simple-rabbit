@@ -4,7 +4,7 @@ let connection;
 const rabbit = {
   init(callback = () => {}, uri = process.env.RABBIT_URI || 'rabbit', attempts = 5) {
     if (connection) return callback(connection);
-    amqp.connect('amqp://rabbit')
+    amqp.connect(`amqp://${uri}`)
     .then(conn => {
       connection = conn;
       callback(connection)
