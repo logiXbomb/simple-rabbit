@@ -1,6 +1,6 @@
 {
   "name": "simple-rabbit",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Simplify nodejs rabbitmq",
   "main": "index.js",
   "scripts": {
@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/logiXbomb/simple-rabbit#readme",
   "dependencies": {
-    "amqplib": "^0.4.2"
+    "amqplib": "^0.4.2",
+    "node-uuid": "^1.4.7"
   }
 }
