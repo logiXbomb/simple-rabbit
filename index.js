@@ -17,7 +17,7 @@ const rabbit = {
   send(q, msg) {
     this.init(conn => {
       conn.createChannel().then(ch => ch.assertQueue(q)
-        .then(() => ch.sendToQueue(q, this.wrap(msg)));
+        .then(() => ch.sendToQueue(q, this.wrap(msg))));
     });
   },
   receive(q, callback) {
