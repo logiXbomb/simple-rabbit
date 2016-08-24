@@ -34,27 +34,28 @@ const rabbit = {
   sendRPC(q, msg, reply) {
     this.init(conn => conn.createChannel().then(ch => {
       const correlationId = uuid();
-      const tryToReply = response => {
+      const maybeAnswer = response => {
         if (response.properties.correlationId === correlationId) {
-          // console.log('This is the response from the RPC', this.unwrap(response));
           reply(this.unwrap(response));
         }
       }
-      ch.assertQueue('').then(queue => {
-        ch.consume(queue.queue, tryToReply, { noAck: true });
+      ch.assertQueue('', { exclusive: true }).then(queue => {
+        ch.consume(queue.queue, maybeAnswer, { noAck: true });
         ch.sendToQueue(q, this.wrap(msg), { correlationId, replyTo: queue.queue });
       })
     }));
   },
-  receiveRPC(q) {
+  receiveRPC(q, done) {
     this.init(conn => conn.createChannel().then(ch => {
       const reply = msg => {
-        ch.sendToQueue(
-          msg.properties.replyTo,
-          msg.content,
-          { correlationId: msg.properties.correlationId }
-        )
-        ch.ack(msg);
+        done(this.unwrap(msg), (response) => {
+          ch.sendToQueue(
+            msg.properties.replyTo,
+            this.wrap(response),
+            { correlationId: msg.properties.correlationId }
+          )
+          ch.ack(msg);
+        })
       }
       ch.assertQueue(q, { durable: false })
         .then(() => {
