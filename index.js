@@ -25,25 +25,43 @@ const rabbit = {
       conn.createChannel().then(ch => ch.assertQueue(q)
         .then(() => {
           ch.consume(q, msg => {
-            callback(this.unwrap(json));
+            callback(this.unwrap(msg));
             ch.ack(msg);
           })
         }));
     });
   },
   sendRPC(q, msg, reply) {
-    this.init(conn => conn.createChannel().then(ch => {
-      const correlationId = uuid();
-      const maybeAnswer = response => {
-        if (response.properties.correlationId === correlationId) {
-          reply(this.unwrap(response));
+    if (reply) {
+      this.init(conn => conn.createChannel().then(ch => {
+        const correlationId = uuid();
+        const maybeAnswer = response => {
+          if (response.properties.correlationId === correlationId) {
+            reply(this.unwrap(response));
+          }
         }
-      }
-      ch.assertQueue('', { exclusive: true }).then(queue => {
-        ch.consume(queue.queue, maybeAnswer, { noAck: true });
-        ch.sendToQueue(q, this.wrap(msg), { correlationId, replyTo: queue.queue });
+        ch.assertQueue('', { exclusive: true }).then(queue => {
+          ch.consume(queue.queue, maybeAnswer, { noAck: true });
+          ch.sendToQueue(q, this.wrap(msg), { correlationId, replyTo: queue.queue });
+        })
+      }));
+    } else {
+      return new Promise((resolve, reject) => {
+        this.init(conn => conn.createChannel().then(ch => {
+          const correlationId = uuid();
+          const maybeAnswer = response => {
+            if (response.properties.correlationId === correlationId) {
+              resolve(this.unwrap(response));
+            }
+          }
+          console.log('made it here')
+          ch.assertQueue('', { exclusive: true }).then(queue => {
+            ch.consume(queue.queue, maybeAnswer, { noAck: true });
+            ch.sendToQueue(q, this.wrap(msg), { correlationId, replyTo: queue.queue });
+          })
+        }));
       })
-    }));
+    }
   },
   receiveRPC(q, done) {
     this.init(conn => conn.createChannel().then(ch => {
