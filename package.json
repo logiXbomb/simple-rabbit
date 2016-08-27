@@ -1,6 +1,6 @@
 {
   "name": "simple-rabbit",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Simplify nodejs rabbitmq",
   "main": "index.js",
   "scripts": {
